@@ -9,15 +9,15 @@ package routers
 
 import (
 	"ApiTestApp/controllers"
-	"log"
-	"os"
 
 	"github.com/astaxie/beego"
 )
 
 const (
 	apiNameSpace = "/api/"
-	user         = "user"
+
+	user   = "user"
+	object = "object"
 )
 
 func init() {
@@ -35,15 +35,7 @@ func init() {
 	)
 	beego.AddNamespace(ns)*/
 
-	logfile, err := os.OpenFile("./test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic("cannnot open test.log:" + err.Error())
-	}
-	defer logfile.Close()
-
-	log.Printf("trace: router.go pass.")
-
 	beego.Router(apiNameSpace+user, &controllers.UserController{}, "Get:Get")
-	//beego.Router(apiNameSpace+user, &controllers.UserController{}, "Get:Get")
+	beego.Router(apiNameSpace+object, &controllers.ObjectController{}, "Get:GetAll")
 
 }
