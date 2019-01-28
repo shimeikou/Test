@@ -14,28 +14,29 @@ import (
 )
 
 const (
-	apiNameSpace = "/api/"
-
-	user   = "user"
-	object = "object"
+	apiNameSpace = "/api"
+	user         = "/user"
+	object       = "/object"
+	session      = "/makesession"
 )
 
 func init() {
-	/*ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/object",
+	ns := beego.NewNamespace(apiNameSpace,
+		beego.NSNamespace(object,
 			beego.NSInclude(
 				&controllers.ObjectController{},
 			),
 		),
-		beego.NSNamespace("/user",
+		beego.NSNamespace(user,
 			beego.NSInclude(
 				&controllers.UserController{},
 			),
 		),
+		beego.NSNamespace(session,
+			beego.NSInclude(
+				&controllers.SessionController{},
+			),
+		),
 	)
-	beego.AddNamespace(ns)*/
-
-	beego.Router(apiNameSpace+user, &controllers.UserController{}, "Get:Get")
-	beego.Router(apiNameSpace+object, &controllers.ObjectController{}, "Get:GetAll")
-
+	beego.AddNamespace(ns)
 }

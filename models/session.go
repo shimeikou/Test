@@ -3,20 +3,38 @@ package models
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"strings"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 )
 
 type Session struct {
-	Id        int64 `orm:"auto"`
-	UserId    int64
-	SessionId int64
+	session_id           string
+	temporary_common_Key string
 }
+
+const rs2Letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func init() {
 	orm.RegisterModel(new(Session))
+}
+
+func (this *Session) InitTmpContent() {
+	this.session_id = RandString2(32)
+	this.temporary_common_Key = RandString2(32)
+	logs.Debug(this)
+	return
+}
+
+func RandString2(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = rs2Letters[rand.Intn(len(rs2Letters))]
+	}
+	return string(b)
 }
 
 // AddSession insert a new Session into database and returns
