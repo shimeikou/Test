@@ -1,19 +1,12 @@
 package controllers
 
 import (
-	"ApiTestApp/models"
-
 	"github.com/astaxie/beego"
 )
 
 // SessionController operations for Session
 type SessionController struct {
 	beego.Controller
-}
-
-type SessionResponse struct {
-	session_id           string
-	temporary_common_Key string
 }
 
 // URLMapping ...
@@ -28,12 +21,8 @@ func (s *SessionController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (this *SessionController) Post() {
-	//var req models
-	//if err := json.Unmarshal(this.Ctx.Input.RequestBody, &req); err != nil {
-	//	log.Fatal(err)
-	//}
-	var responseObj models.Session
-	responseObj.InitTmpContent()
-	this.Data["json"] = responseObj
+
+	this.Data["json"] = `{"Name":"Alice","Body":"Hello","Time":1294706395881547000}`
 	this.ServeJSON()
+
 }
