@@ -1,4 +1,4 @@
-package RedisUtil
+package Service
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ var (
 	RedisClient redis.Client
 )
 
-func Init() {
+func RedisInit() {
 	RedisClient := redis.NewClient(&redis.Options{
 		Addr:         REDIS_IP_PORT,
 		Password:     "", // no password set

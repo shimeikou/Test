@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"ApiTestApp/models"
+
 	"github.com/astaxie/beego"
 )
 
@@ -17,12 +19,11 @@ func (s *SessionController) URLMapping() {
 
 // @Title Post
 // @Description Make Session
-// @Success 200 {object} models.SessionResponse
+// @Success 200 {object} models.MakeSessionResponse
 // @Failure 403 body is empty
 // @router / [post]
 func (this *SessionController) Post() {
-
-	this.Data["json"] = `{"Name":"Alice","Body":"Hello","Time":1294706395881547000}`
+	json := models.CreateNewSessionResponse()
+	this.Data["json"] = string(json)
 	this.ServeJSON()
-
 }

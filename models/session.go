@@ -1,25 +1,36 @@
 package models
 
 import (
-	"crypto/rand"
-	"encoding/base64"
-	"io"
+	"ApiTestApp/AppUtil"
+	SessionService "ApiTestApp/service"
+	"encoding/json"
 )
 
+//構造体変数名パスカルケースしないとjsonにできない謎仕様なので要注意
 type Session struct {
-	session_id string
+	SessionId string `json:"session_id"`
 	//temporary_common_Key string
 }
 
-type SessionResponse struct {
-	result_code int
-	session     *Session
+type ResponseTmp struct {
+	ResultCode int   `json:"result_code"`
+	TtimeStamp int64 `json:"time_stamp"`
 }
 
-func MakeSessionId() string {
-	b := make([]byte, 32)
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
-		return ""
+type MakeSessionResponse struct {
+	Session
+	ResponseTmp
+}
+
+func CreateNewSessionResponse() []byte {
+	var sessionResponse = MakeSessionResponse{}
+	sessionResponse.ResultCode = AppUtil.RESULT_CODE_SUCCESS
+	sessionResponse.TtimeStamp = 0
+	sessionResponse.SessionId = SessionService.MakeSessionId()
+	if sessionResponse.SessionId == "" {
+		// エラー時の処理
+		sessionResponse.ResultCode = AppUtil.RESULT_CODE_ERROR
 	}
-	return base64.URLEncoding.EncodeToString(b)
+	outputJson, _ := json.Marshal(&sessionResponse)
+	return outputJson
 }
