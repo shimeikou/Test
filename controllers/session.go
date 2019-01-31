@@ -14,16 +14,18 @@ type SessionController struct {
 // URLMapping ...
 func (s *SessionController) URLMapping() {
 	s.Mapping("Post", s.Post)
-	s.Mapping("Get", s.Get)
 }
 
-// @Title Post
+// Post ...
+// @Title Create
 // @Description Make Session
 // @Success 200 {object} models.MakeSessionResponse
 // @Failure 403 body is empty
 // @router / [post]
 func (this *SessionController) Post() {
-	json := models.CreateNewSessionResponse()
+	res := models.MakeSessionResponse{}
+
+	json := res.SetApiResponse()
 	this.Data["json"] = string(json)
 	this.ServeJSON()
 }

@@ -17,16 +17,24 @@
         "/": {
             "post": {
                 "tags": [
-                    "ApiTestApp/controllersSessionController"
+                    "ApiTestApp/controllersServerInfoController"
                 ],
-                "description": "Make Session",
-                "operationId": "SessionController.Post",
-                "responses": {
-                    "200": {
-                        "description": "",
+                "description": "create ServerInfo",
+                "operationId": "ServerInfoController.Post",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for ServerInfo content",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SessionResponse"
+                            "$ref": "#/definitions/models.ServerInfo"
                         }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "{int} models.ServerInfo"
                     },
                     "403": {
                         "description": "body is empty"
@@ -261,6 +269,30 @@
         }
     },
     "definitions": {
+        "models.MakeSessionResponse": {
+            "title": "MakeSessionResponse",
+            "type": "object",
+            "properties": {
+                "result_code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "temporary_common_key": {
+                    "type": "string"
+                },
+                "time_stamp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.Object": {
             "title": "Object",
             "type": "object",
@@ -296,15 +328,52 @@
                 }
             }
         },
-        "models.SessionResponse": {
-            "title": "SessionResponse",
+        "models.ResponseTmp": {
+            "title": "ResponseTmp",
+            "type": "object",
+            "properties": {
+                "result_code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "time_stamp": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.ServerInfo": {
+            "title": "ServerInfo",
+            "type": "object",
+            "properties": {
+                "assert_hash": {
+                    "type": "string"
+                },
+                "maintenance_state": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "master_hash": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Session": {
+            "title": "Session",
             "type": "object",
             "properties": {
                 "session_id": {
                     "type": "string"
                 },
-                "temporary_common_Key": {
+                "temporary_common_key": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
@@ -336,6 +405,9 @@
         },
         {
             "description": "SessionController operations for Session\n"
+        },
+        {
+            "description": " ServerInfoController operations for ServerInfo\n"
         }
     ]
 }

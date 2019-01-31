@@ -13,14 +13,19 @@ paths:
   /:
     post:
       tags:
-      - ApiTestApp/controllersSessionController
-      description: Make Session
-      operationId: SessionController.Post
+      - ApiTestApp/controllersServerInfoController
+      description: create ServerInfo
+      operationId: ServerInfoController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for ServerInfo content
+        required: true
+        schema:
+          $ref: '#/definitions/models.ServerInfo'
       responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.SessionResponse'
+        "201":
+          description: '{int} models.ServerInfo'
         "403":
           description: body is empty
   /{objectId}:
@@ -173,6 +178,23 @@ paths:
         "200":
           description: '{string} logout success'
 definitions:
+  models.MakeSessionResponse:
+    title: MakeSessionResponse
+    type: object
+    properties:
+      result_code:
+        type: integer
+        format: int32
+      session_id:
+        type: string
+      temporary_common_key:
+        type: string
+      time_stamp:
+        type: integer
+        format: int64
+      user_id:
+        type: integer
+        format: int64
   models.Object:
     title: Object
     type: object
@@ -197,14 +219,40 @@ definitions:
         type: string
       Gender:
         type: string
-  models.SessionResponse:
-    title: SessionResponse
+  models.ResponseTmp:
+    title: ResponseTmp
+    type: object
+    properties:
+      result_code:
+        type: integer
+        format: int32
+      time_stamp:
+        type: integer
+        format: int64
+  models.ServerInfo:
+    title: ServerInfo
+    type: object
+    properties:
+      assert_hash:
+        type: string
+      maintenance_state:
+        type: integer
+        format: int64
+      master_hash:
+        type: string
+      version:
+        type: string
+  models.Session:
+    title: Session
     type: object
     properties:
       session_id:
         type: string
-      temporary_common_Key:
+      temporary_common_key:
         type: string
+      user_id:
+        type: integer
+        format: int64
   models.User:
     title: User
     type: object
@@ -224,3 +272,5 @@ tags:
     Operations about Users
 - description: |
     SessionController operations for Session
+- description: |2
+     ServerInfoController operations for ServerInfo

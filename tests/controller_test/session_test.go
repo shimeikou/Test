@@ -1,42 +1,24 @@
 package test
 
 import (
+	"ApiTestApp/controllers"
 	"net/http"
 	"net/http/httptest"
-	"path/filepath"
-	"runtime"
 	"testing"
 
-	"github.com/astaxie/beego/logs"
-
-	"github.com/astaxie/beego"
-	//. "github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-func init() {
-	_, file, _, _ := runtime.Caller(1)
-	apppath, _ := filepath.Abs(filepath.Dir(filepath.Join(file, "../../../"+string(filepath.Separator))))
-
-	beego.TestBeegoInit(apppath)
-}
-
-// TestGet is a sample to run an endpoint test
-func TestPost(t *testing.T) {
-	r, _ := http.NewRequest("POST", "/api/makesession", nil)
+func TestUserController_Handler(t *testing.T) {
+	// prepare http.Request and http.ResponseWriter
 	w := httptest.NewRecorder()
-	beego.BeeApp.Handlers.ServeHTTP(w, r)
+	r := httptest.NewRequest("GET", "/api/user", nil)
 
-	beego.Trace("testing", "TestPost", "Code[%d]\n%s", w.Code, w.Body.String())
+	// execute the target method
+	c := controllers.UserController{}
+	c.Get()
+	res := w.Result()
+	defer res.Body.Close()
 
-	logs.Debug(w.Code)
-	/*
-		Convey("Subject: Test Station Endpoint\n", t, func() {
-			Convey("Status Code Should Be 200", func() {
-				So(w.Code, ShouldEqual, 200)
-			})
-			Convey("The Result Should Not Be Empty", func() {
-				So(w.Body.Len(), ShouldBeGreaterThan, 0)
-			})
-		})
-	*/
+	testutil.AssertResponse(t, res, http.StatusOK, "./testdata/user_controller/response.golden")
 }
