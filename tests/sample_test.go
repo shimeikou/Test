@@ -1,7 +1,7 @@
 package tests
 
 import "testing"
-import AppUtil "ApiTestApp/AppUtil"
+import AppUtil "ApiTestApp/appUtil"
 
 func TestExampleSuccess(t *testing.T) {
 	result := AppUtil.RESULT_CODE_ERROR

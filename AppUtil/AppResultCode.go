@@ -1,4 +1,4 @@
-package AppUtil
+package appUtil
 
 const (
 	RESULT_CODE_SUCCESS = 0
