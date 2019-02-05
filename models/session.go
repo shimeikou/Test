@@ -26,7 +26,7 @@ type MakeSessionResponse struct {
 	ResponseTmp
 }
 
-func (this *MakeSessionResponse) SetApiResponse() []byte {
+func (this *MakeSessionResponse) SetApiResponse() (string, []byte) {
 	this.ResultCode = appUtil.RESULT_CODE_SUCCESS
 	this.TimeStamp = service.GetTimeRFC3339()
 	this.TemporaryCommonKey = ""
@@ -40,7 +40,7 @@ func (this *MakeSessionResponse) SetApiResponse() []byte {
 		// エラーコードを入れる
 		panic(err)
 	}
-	return outputJson
+	return this.SessionId, outputJson
 }
 
 func MakeSessionId() string {

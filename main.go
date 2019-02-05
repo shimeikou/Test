@@ -27,7 +27,6 @@ func Init() {
 	//logs.SetLogger(logs.AdapterSlack, `{"webhookurl":"https://slack.com/xxx","level":1}`)
 
 	service.RedisInit()
-
 	/*res := Service.RedisGet("123")
 	logs.Debug(res)
 	*/

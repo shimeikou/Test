@@ -13,6 +13,10 @@ var (
 	RedisConnectionPool *redis.Pool
 )
 
+func RedisInit() {
+	RedisConnectionPool = RedisInitPool()
+}
+
 func RedisInitPool() *redis.Pool {
 	return &redis.Pool{
 		MaxIdle:     3,
@@ -20,8 +24,4 @@ func RedisInitPool() *redis.Pool {
 		IdleTimeout: 240 * time.Second,
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", REDIS_IP_PORT) },
 	}
-}
-
-func RedisInit() {
-	RedisConnectionPool = RedisInitPool()
 }

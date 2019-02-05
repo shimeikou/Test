@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"ApiTestApp/models"
+	"ApiTestApp/service"
+
+	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
 )
@@ -24,8 +27,18 @@ func (s *SessionController) URLMapping() {
 // @router / [post]
 func (this *SessionController) Post() {
 	res := models.MakeSessionResponse{}
-
-	json := res.SetApiResponse()
+	Sessionid, json := res.SetApiResponse()
+	setCache(Sessionid, json)
 	this.Data["json"] = string(json)
 	this.ServeJSON()
+}
+
+func setCache(key string, sessionResponse []byte) {
+	conn := service.RedisConnectionPool.Get()
+	defer conn.Close()
+	val, err := conn.Do("SET", key, sessionResponse, "NX", "EX", "120")
+	if val == nil {
+		logs.Error("session id is exist!!", key)
+		panic(err)
+	}
 }
