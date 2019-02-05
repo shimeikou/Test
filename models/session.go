@@ -2,7 +2,7 @@ package models
 
 import (
 	"ApiTestApp/AppUtil"
-	"ApiTestApp/Service"
+	service "ApiTestApp/Service"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
@@ -28,7 +28,7 @@ type MakeSessionResponse struct {
 
 func (this *MakeSessionResponse) SetApiResponse() []byte {
 	this.ResultCode = AppUtil.RESULT_CODE_SUCCESS
-	this.TimeStamp = Service.GetTimeRFC3339()
+	this.TimeStamp = service.GetTimeRFC3339()
 	this.TemporaryCommonKey = ""
 	this.SessionId = MakeSessionId()
 	if this.SessionId == "" {
