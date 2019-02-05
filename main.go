@@ -2,9 +2,6 @@ package main
 
 import (
 	_ "ApiTestApp/routers"
-	"ApiTestApp/service"
-
-	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -27,12 +24,10 @@ func Init() {
 	}
 	//logs.SetLogFuncCallDepth(1)
 	//logs.SetLogger(logs.AdapterSlack, `{"webhookurl":"https://slack.com/xxx","level":1}`)
-	service.RedisInit()
 
-	conn := service.RedisConnectionPool.Get()
-	defer conn.Close()
-	t := time.Now()
-	s := t.String()
-	conn.Do("Set", "reidsgo_key", s)
+	sevice.InitRedisPool()
 
+	/*res := Service.RedisGet("123")
+	logs.Debug(res)
+	*/
 }
