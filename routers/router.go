@@ -20,6 +20,7 @@ const (
 	USER        = "/user"
 	OBJECT      = "/object"
 	SESSION     = "/makesession"
+	SIGNUP      = "/signup"
 )
 
 func init() {
@@ -42,6 +43,11 @@ func init() {
 		beego.NSNamespace(SERVER_INFO,
 			beego.NSInclude(
 				&controllers.ServerInfoController{},
+			),
+		),
+		beego.NSNamespace(SIGNUP,
+			beego.NSInclude(
+				&controllers.SignupController{},
 			),
 		),
 	)

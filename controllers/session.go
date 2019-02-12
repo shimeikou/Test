@@ -36,7 +36,7 @@ func (this *SessionController) Post() {
 func setCache(key string, sessionResponse []byte) {
 	conn := service.RedisConnectionPool.Get()
 	defer conn.Close()
-	val, err := conn.Do("SET", key, sessionResponse, "NX", "EX", "120")
+	val, err := conn.Do("SET", key, sessionResponse, "NX", "EX", 60*5)
 	if val == nil {
 		logs.Error("session id is exist!!", key)
 		panic(err)
