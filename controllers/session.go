@@ -36,7 +36,11 @@ func (this *SessionController) Post() {
 func setCache(key string, sessionResponse []byte) {
 	conn := service.RedisConnectionPool.Get()
 	defer conn.Close()
+
+	//toDo: result codeとかもセットしてしまうので、タイミング見てHSetとかに変更して無駄をなくすべし
 	val, err := conn.Do("SET", key, sessionResponse, "NX", "EX", 60*5)
+
+	//toDo: retry create session if it existed
 	if val == nil {
 		logs.Error("session id is exist!!", key)
 		panic(err)
