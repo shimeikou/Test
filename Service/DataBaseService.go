@@ -11,7 +11,7 @@ import (
 
 func GetMysqlConnection(shardId int) *sql.DB {
 	No := strconv.Itoa(shardId)
-	db, e := sql.Open("mysql", "root:password@/unix(/var/run/mysqld/mysqld.sock)/user_data"+No)
+	db, e := sql.Open("mysql", "root:password@/user_data_"+No)
 	if e != nil {
 		logs.Debug("database access error!")
 	}

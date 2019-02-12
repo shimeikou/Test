@@ -45,7 +45,11 @@ func (this *SignupController) Post() {
 		panic(err)
 	}
 
-	logs.Debug(sessionInfo)
+	db := service.GetMysqlConnection(0)
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM users")
+	defer rows.Close()
 
 	this.Data["json"] = sessionInfo.SessionId
 	this.ServeJSON()
