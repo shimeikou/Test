@@ -18,7 +18,7 @@ type Session struct {
 
 type ResponseTmp struct {
 	ResultCode uint16 `json:"result_code"`
-	TimeStamp  string `json:"time_stamp"`
+	Time       string `json:"time"`
 }
 
 type MakeSessionResponse struct {
@@ -28,7 +28,7 @@ type MakeSessionResponse struct {
 
 func (this *MakeSessionResponse) SetApiResponse() (string, []byte) {
 	this.ResultCode = appUtil.RESULT_CODE_SUCCESS
-	this.TimeStamp = service.GetTimeRFC3339()
+	this.Time = service.GetTimeRFC3339()
 	this.TemporaryCommonKey = ""
 	this.SessionId = MakeSessionId()
 	if this.SessionId == "" {

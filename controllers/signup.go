@@ -36,20 +36,14 @@ func (this *SignupController) Post() {
 
 	if sessionInfoBytes == nil || err != nil {
 		logs.Error("[signup] get session info failed. maybe session Expired :", sessionId)
-		panic(err)
 	}
 
 	sessionInfo := new(models.MakeSessionResponse)
 	if err = json.Unmarshal(sessionInfoBytes, sessionInfo); err != nil {
 		logs.Error("[signup] unmarshal json failed!!")
-		panic(err)
 	}
 
-	db := service.GetMysqlConnection(0)
-	defer db.Close()
-
-	rows, err := db.Query("SELECT * FROM users")
-	defer rows.Close()
+	res := models.SignUpResponse
 
 	this.Data["json"] = sessionInfo.SessionId
 	this.ServeJSON()
