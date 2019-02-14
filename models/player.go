@@ -1,17 +1,15 @@
 package models
 
+//SignUpResponse はsignUpApiのレスポンス
 type SignUpResponse struct {
 	Player
 	ResponseTmp
-	uuid string `json:"uuid"`
-	salt string `json:"salt"`
 }
 
+//Player ユーザの基本データ
 type Player struct {
-	PlayerId     int64  `json:"user_id"`
+	ID           uint64 `json:"id"`
+	ShardID      uint8  `json:"shard_id"`
 	RegisterDate string `json:"register_date"`
-}
-
-func (this *SignUpResponse) SetApiResponse() (string, []byte) {
-
+	UUIDHash     string `json:"uuid_hash"`
 }

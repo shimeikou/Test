@@ -1,7 +1,7 @@
 package models
 
 import (
-	"ApiTestApp/appUtil"
+	"ApiTestApp/apputil"
 	"ApiTestApp/service"
 	"crypto/rand"
 	"encoding/base64"
@@ -27,13 +27,15 @@ type MakeSessionResponse struct {
 }
 
 func (this *MakeSessionResponse) SetApiResponse() (string, []byte) {
-	this.ResultCode = appUtil.RESULT_CODE_SUCCESS
+	this.ResultCode = apputil.ResultCodeSuccess
 	this.Time = service.GetTimeRFC3339()
-	this.TemporaryCommonKey = ""
+	this.TemporaryCommonKey = "abcdefg1234567"
+	this.UserId = 0
+
 	this.SessionId = MakeSessionId()
 	if this.SessionId == "" {
 		// エラーコードを入れる
-		this.ResultCode = appUtil.RESULT_CODE_ERROR
+		this.ResultCode = apputil.ResultCodeError
 	}
 	outputJson, err := json.Marshal(this)
 	if err != nil {

@@ -1,6 +1,12 @@
-package appUtil
+package apputil
 
 const (
-	RESULT_CODE_SUCCESS = 0
-	RESULT_CODE_ERROR   = 500
+	//ResultCodeSuccess API成功
+	ResultCodeSuccess = 0
+
+	//ResultCodeError APIエラー
+	ResultCodeError = 500
 )
+
+//DataBaseShardMax dbシャード最大数
+const DataBaseShardMax = 2

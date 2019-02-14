@@ -1,7 +1,7 @@
 package models
 
 import (
-	"ApiTestApp/appUtil"
+	"ApiTestApp/apputil"
 	"ApiTestApp/service"
 	"encoding/json"
 
@@ -21,8 +21,8 @@ func (this *ServerInfo) SetApiResponse() []byte {
 	this.MasterHash = beego.AppConfig.String("MasterHash")
 	this.ServerVersion = beego.AppConfig.String("ServerVersion")
 	this.MaintenanceState, _ = beego.AppConfig.Int("MaintenanceState!")
-	this.ResultCode = appUtil.RESULT_CODE_SUCCESS
-	this.TimeStamp = service.GetTimeRFC3339()
+	this.ResultCode = apputil.ResultCodeSuccess
+	this.Time = service.GetTimeRFC3339()
 
 	outputJson, err := json.Marshal(this)
 	if err != nil {

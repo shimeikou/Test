@@ -2,18 +2,18 @@ package service
 
 import (
 	"database/sql"
-	"strconv"
 
 	"github.com/astaxie/beego/logs"
 
+	//mysqlドライバ
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetMysqlConnection(shardId int) *sql.DB {
-	No := strconv.Itoa(shardId)
-	db, e := sql.Open("mysql", "root:password@/user_data_"+No)
+//GetMysqlConnection シャード分けされたユーザデータdb
+func GetMysqlConnection(database string) *sql.DB {
+	db, e := sql.Open("mysql", "root:password@/"+database)
 	if e != nil {
-		logs.Debug("database access error!")
+		logs.Error("database access error!")
 	}
 	return db
 }
