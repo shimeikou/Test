@@ -5,7 +5,6 @@ import (
 	"ApiTestApp/models"
 	"ApiTestApp/service"
 	"encoding/json"
-	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -29,25 +28,32 @@ func (c *SignupController) URLMapping() {
 // @Success 201 {object} models.Signup
 // @Failure 403 body is empty
 // @router / [post]
-func (this *SignupController) Post() {
-	sessionId := this.Ctx.Input.Header("session-id")
+func (c *SignupController) Post() {
+	sessionID := c.Ctx.Input.Header("session-id")
 
 	dbConn := service.RedisConnectionPool.Get()
 	defer dbConn.Close()
-	sessionInfoBytes, err := redis.Bytes(dbConn.Do("Get", sessionId))
+	sessionInfoBytes, err := redis.Bytes(dbConn.Do("Get", sessionID))
 
 	if sessionInfoBytes == nil || err != nil {
-		logs.Error("[signup] get session info failed. maybe session Expired :", sessionId)
+		logs.Error("[signup] get session info failed. maybe session Expired :", sessionID)
+		c.Data["json"] = "[signup] session expired!"
+		c.ServeJSON()
+		return
 	}
 
 	sessionInfo := new(models.MakeSessionResponse)
 	if err = json.Unmarshal(sessionInfoBytes, sessionInfo); err != nil {
 		logs.Error("[signup] unmarshal cache failed!!")
-		panic(err)
+		c.Data["json"] = "[signup] unmarshal failed!"
+		c.ServeJSON()
+		return
 	}
 
 	if sessionInfo.UserId != 0 {
 		logs.Error("[signup] session'userID is setted!!")
+		c.Data["json"] = "[signup] session'userID is setted!!"
+		c.ServeJSON()
 		return
 	}
 
@@ -60,10 +66,11 @@ func (this *SignupController) Post() {
 		panic(err)
 	}
 
-	this.Data["json"] = string(json)
-	this.ServeJSON()
+	c.Data["json"] = string(json)
+	c.ServeJSON()
 }
 
+//SetupSignUpResponse レスポンスセット
 func SetupSignUpResponse() (uint64, []byte) {
 	db := service.GetMysqlConnection("user_data")
 	defer db.Close()
@@ -77,15 +84,18 @@ func SetupSignUpResponse() (uint64, []byte) {
 			if err := trans.Rollback(); err != nil {
 				panic(err.Error())
 			}
-			fmt.Println("Rollbacked")
+			logs.Error("Rollbacked")
 		}
 	}()
 
 	var count uint64
 	db.QueryRow(`select count(id) from users`).Scan(&count)
+
 	shardID := (count + 1) % apputil.DataBaseShardMax
+
 	now := service.GetTimeDefault()
-	UUIDHash := "uuid_hash"
+	//UUID
+	UUIDHash := service.EncodeUUID(count + 1)
 
 	result, err := db.Exec(
 		`INSERT INTO users(shard_id,register_date,uuid_hash) VALUES(?,?,?)`,
