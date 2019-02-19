@@ -1,5 +1,6 @@
 package tests
 
+/*
 import (
 	_ "ApiTestApp/routers"
 	"net/http"
@@ -35,3 +36,4 @@ func TestGet(t *testing.T) {
 		})
 	})
 }
+*/
