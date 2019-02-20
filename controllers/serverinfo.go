@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego"
 )
 
-//  ServerInfoController operations for ServerInfo
+//ServerInfoController operations for ServerInfo
 type ServerInfoController struct {
 	beego.Controller
 }

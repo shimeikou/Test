@@ -7,11 +7,12 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// Operations about object
+//ObjectController Operations about object
 type ObjectController struct {
 	beego.Controller
 }
 
+// Post
 // @Title Create
 // @Description create object
 // @Param	body		body 	models.Object	true		"The object content"
@@ -89,4 +90,3 @@ func (o *ObjectController) Delete() {
 	o.Data["json"] = "delete success!"
 	o.ServeJSON()
 }
-

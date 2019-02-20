@@ -4,7 +4,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"fmt"
 	"io"
 )
 
@@ -26,8 +25,6 @@ func GCMEncrypt(plainText string) []byte {
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("AAA %x\n", nonce)
-
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
 		panic(err.Error())

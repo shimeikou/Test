@@ -1,7 +1,9 @@
 package service
 
 import (
+	"github.com/astaxie/beego/logs"
 	hashids "github.com/speps/go-hashids"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //UUIDSalt uuid生成salt
@@ -33,4 +35,20 @@ func DecodeUUID(UUID string) int {
 
 	numbers, _ := h.DecodeWithError(UUID)
 	return numbers[0]
+}
+
+//UUIDToHash 生成したUUIDをpwと見立てて、そこからさらにDB保存用Hashを生成
+func UUIDToHash(UUID string) string {
+	//まあ本番運用ないのでmincostで生成するわ
+	hash, err := bcrypt.GenerateFromPassword([]byte(UUID), bcrypt.MinCost)
+	if err != nil {
+		logs.Error(err)
+		return ""
+	}
+	return string(hash)
+}
+
+//VerifyUUID 生成したUUIDをpwと見立てて、そこからさらにDB保存用Hashを生成
+func VerifyUUID(UUID string, UUIDHash string) error {
+	return bcrypt.CompareHashAndPassword([]byte(UUIDHash), []byte(UUID))
 }

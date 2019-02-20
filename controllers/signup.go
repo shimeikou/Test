@@ -33,46 +33,40 @@ func (c *SignupController) Post() {
 
 	dbConn := service.RedisConnectionPool.Get()
 	defer dbConn.Close()
-	sessionInfoBytes, err := redis.Bytes(dbConn.Do("Get", sessionID))
+	UserID, err := redis.Int(dbConn.Do("Get", sessionID))
 
-	if sessionInfoBytes == nil || err != nil {
+	if err != nil {
 		logs.Error("[signup] get session info failed. maybe session Expired :", sessionID)
 		c.Data["json"] = "[signup] session expired!"
 		c.ServeJSON()
 		return
 	}
 
-	sessionInfo := new(models.MakeSessionResponse)
-	if err = json.Unmarshal(sessionInfoBytes, sessionInfo); err != nil {
-		logs.Error("[signup] unmarshal cache failed!!")
-		c.Data["json"] = "[signup] unmarshal failed!"
-		c.ServeJSON()
-		return
-	}
-
-	if sessionInfo.UserId != 0 {
+	if UserID != models.UndecidedUserID {
 		logs.Error("[signup] session'userID is setted!!")
 		c.Data["json"] = "[signup] session'userID is setted!!"
 		c.ServeJSON()
 		return
 	}
 
-	userID, json := SetupSignUpResponse()
+	newUserID, json := SetupSignUpResponse()
 
 	redisConn := service.RedisConnectionPool.Get()
 	defer redisConn.Close()
-	_, err = redisConn.Do("SET", sessionInfo.SessionId, userID, "EX", 60*60*6)
-	if err != nil {
-		panic(err)
-	}
 
-	c.Data["json"] = string(json)
+	//セッションIDに正式のuserIDを付けて、さらに5分の命を与える
+	_, err = redisConn.Do("SET", sessionID, newUserID, "EX", 60*5)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		c.Data["json"] = string(json)
+	}
 	c.ServeJSON()
 }
 
 //SetupSignUpResponse レスポンスセット
 func SetupSignUpResponse() (uint64, []byte) {
-	db := service.GetMysqlConnection("user_data")
+	db := service.GetMysqlConnection(service.UserEntryDataBaseName)
 	defer db.Close()
 
 	trans, err := db.Begin()
@@ -89,32 +83,35 @@ func SetupSignUpResponse() (uint64, []byte) {
 	}()
 
 	var count uint64
-	db.QueryRow(`select count(id) from users`).Scan(&count)
+	trans.QueryRow(`select count(id) from users`).Scan(&count)
 
-	shardID := (count + 1) % apputil.DataBaseShardMax
+	shardID := (count + 1) % service.DataBaseShardMax
 
 	now := service.GetTimeDefault()
 	//UUID
-	UUIDHash := service.EncodeUUID(count + 1)
+	UUID := service.EncodeUUID(count + 1)
+	UUIDHash := service.UUIDToHash(UUID)
 
-	result, err := db.Exec(
-		`INSERT INTO users(shard_id,register_date,uuid_hash) VALUES(?,?,?)`,
+	result, err := trans.Exec(
+		`INSERT INTO users(shard_id,uuid_hash,register_date,login_at) VALUES(?,?,?,?)`,
 		shardID,
-		now,
 		UUIDHash,
+		now,
+		now,
 	)
 	if err != nil {
-		panic(err.Error())
+		return 0, []byte(err.Error())
 	}
 	if err = trans.Commit(); err != nil {
-		panic(err.Error())
+		return 0, []byte(err.Error())
 	}
 
 	id, _ := result.LastInsertId()
 	res := new(models.SignUpResponse)
 	res.ID = uint64(id)
 	res.RegisterDate = now
-	res.UUIDHash = UUIDHash
+	res.LoginAt = now
+	res.UUID = UUID
 
 	res.ResultCode = apputil.ResultCodeSuccess
 	res.Time = service.GetTimeRFC3339()
