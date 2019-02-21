@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"ApiTestApp/apputil"
 	"ApiTestApp/models"
+	"ApiTestApp/service"
+	"encoding/json"
 
 	"github.com/astaxie/beego"
 )
@@ -24,8 +27,25 @@ func (c *ServerInfoController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *ServerInfoController) Post() {
-	res := models.ServerInfo{}
-	json := res.SetApiResponse()
+	json := SetAPIResponse()
 	c.Data["json"] = string(json)
 	c.ServeJSON()
+}
+
+//SetAPIResponse ...
+func SetAPIResponse() []byte {
+
+	res := models.ServerInfo{}
+	res.AssertHash = beego.AppConfig.String("AssertHash")
+	res.MasterHash = beego.AppConfig.String("MasterHash")
+	res.ServerVersion = beego.AppConfig.String("ServerVersion")
+	res.MaintenanceState, _ = beego.AppConfig.Int("MaintenanceState!")
+	res.ResultCode = apputil.ResultCodeSuccess
+	res.Time = service.GetTimeRFC3339()
+
+	outputJSON, err := json.Marshal(res)
+	if err != nil {
+		panic(err)
+	}
+	return outputJSON
 }

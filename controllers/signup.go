@@ -14,11 +14,18 @@ import (
 // SignupController operations for Signup
 type SignupController struct {
 	beego.Controller
+	APICommonPrameter
 }
 
 // URLMapping ...
 func (c *SignupController) URLMapping() {
 	c.Mapping("Post", c.Post)
+}
+
+//Prepare ...
+func (c *SignupController) Prepare() {
+	c.StateCode = apputil.ResultCodeSuccess
+	c.CheckServerVitality()
 }
 
 // Post ...
@@ -29,6 +36,12 @@ func (c *SignupController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *SignupController) Post() {
+	if c.StateCode != apputil.ResultCodeSuccess {
+		c.Data["json"] = c.ErrorReturn()
+		c.ServeJSON()
+		return
+	}
+
 	sessionID := c.Ctx.Input.Header("session-id")
 
 	dbConn := service.RedisConnectionPool.Get()
@@ -37,35 +50,28 @@ func (c *SignupController) Post() {
 
 	if err != nil {
 		logs.Error("[signup] get session info failed. maybe session Expired :", sessionID)
-		c.Data["json"] = "[signup] session expired!"
+		c.StateCode = apputil.ResultCodeSessionError
+		c.Data["json"] = c.ErrorReturn()
 		c.ServeJSON()
 		return
 	}
 
 	if UserID != models.UndecidedUserID {
-		logs.Error("[signup] session'userID is setted!!")
-		c.Data["json"] = "[signup] session'userID is setted!!"
+		logs.Error("[signup] session'userID is setted!!", sessionID)
+		c.StateCode = apputil.ResultCodeSessionError
+		c.Data["json"] = c.ErrorReturn()
 		c.ServeJSON()
 		return
 	}
 
-	newUserID, json := SetupSignUpResponse()
+	json := SetupSignUpResponse()
+	c.Data["json"] = string(json)
 
-	redisConn := service.RedisConnectionPool.Get()
-	defer redisConn.Close()
-
-	//セッションIDに正式のuserIDを付けて、さらに5分の命を与える
-	_, err = redisConn.Do("SET", sessionID, newUserID, "EX", 60*5)
-	if err != nil {
-		c.Data["json"] = err.Error()
-	} else {
-		c.Data["json"] = string(json)
-	}
 	c.ServeJSON()
 }
 
 //SetupSignUpResponse レスポンスセット
-func SetupSignUpResponse() (uint64, []byte) {
+func SetupSignUpResponse() []byte {
 	db := service.GetMysqlConnection(service.UserEntryDataBaseName)
 	defer db.Close()
 
@@ -100,10 +106,10 @@ func SetupSignUpResponse() (uint64, []byte) {
 		now,
 	)
 	if err != nil {
-		return 0, []byte(err.Error())
+		return []byte(err.Error())
 	}
 	if err = trans.Commit(); err != nil {
-		return 0, []byte(err.Error())
+		return []byte(err.Error())
 	}
 
 	id, _ := result.LastInsertId()
@@ -117,5 +123,5 @@ func SetupSignUpResponse() (uint64, []byte) {
 	res.Time = service.GetTimeRFC3339()
 
 	outputJSON, err := json.Marshal(res)
-	return res.ID, outputJSON
+	return outputJSON
 }

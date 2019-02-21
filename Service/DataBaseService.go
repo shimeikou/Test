@@ -15,9 +15,15 @@ const DataBaseShardMax = 2
 //UserEntryDataBaseName ...
 const UserEntryDataBaseName = "user_data"
 
-//GetMysqlConnection シャード分けされたユーザデータdb
+//MasterDataBaseName ...
+const MasterDataBaseName = "master_data"
+
+//ShardUserDataBaseName ...
+const ShardUserDataBaseName = "user_data_"
+
+//GetMysqlConnection 指定したdbへのコネクトを取得(プールはドライバがやってくれる)
 func GetMysqlConnection(database string) *sql.DB {
-	db, e := sql.Open("mysql", "root:password@/"+database)
+	db, e := sql.Open("mysql", "root:password@/"+database) // <-この辺、appconfに移すべきなんだろうけどさ...
 	if e != nil {
 		logs.Error("database access error!")
 	}

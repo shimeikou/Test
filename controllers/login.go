@@ -16,24 +16,6 @@ type LoginController struct {
 	beego.Controller
 }
 
-//APICommonMethod ...
-type APICommonMethod struct {
-	userID uint64
-}
-
-//GetUserIDFromSessionID ...
-func (c *APICommonMethod) GetUserIDFromSessionID(sessionID string) interface{} {
-	dbConn := service.RedisConnectionPool.Get()
-	defer dbConn.Close()
-	userID, err := redis.Int64(dbConn.Do("Get", sessionID))
-
-	if err != nil {
-		logs.Error(err)
-		return -1
-	}
-	return userID
-}
-
 // URLMapping ...
 func (c *LoginController) URLMapping() {
 	c.Mapping("Post", c.Post)

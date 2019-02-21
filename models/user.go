@@ -6,7 +6,7 @@ type SignUpResponse struct {
 	ResponseTmp
 }
 
-//UndecidedUserID ...
+//UndecidedUserID 未定IDを示す定数
 const UndecidedUserID = -999
 
 //User ユーザの基本データ

@@ -9,43 +9,47 @@ import (
 	"io"
 )
 
-//構造体変数名パスカルケースしないとjsonにできない謎仕様なので要注意
+//Session 構造体変数名パスカルケースしないとjsonにできない謎仕様なので要注意
 type Session struct {
-	SessionId          string `json:"session_id"`
+	SessionID          string `json:"session_id"`
 	TemporaryCommonKey string `json:"temporary_common_key"`
-	UserId             uint64 `json:"user_id"`
+	UserID             uint64 `json:"user_id"`
 }
 
+//ResponseTmp ...
 type ResponseTmp struct {
 	ResultCode uint16 `json:"result_code"`
 	Time       string `json:"time"`
 }
 
+//MakeSessionResponse ...
 type MakeSessionResponse struct {
 	Session
 	ResponseTmp
 }
 
-func (this *MakeSessionResponse) SetApiResponse() (string, []byte) {
-	this.ResultCode = apputil.ResultCodeSuccess
-	this.Time = service.GetTimeRFC3339()
-	this.TemporaryCommonKey = "abcdefg1234567"
-	this.UserId = 0
+//SetAPIResponse ...
+func (c *MakeSessionResponse) SetAPIResponse() (string, []byte) {
+	c.ResultCode = apputil.ResultCodeSuccess
+	c.Time = service.GetTimeRFC3339()
+	c.TemporaryCommonKey = "abcdefg1234567"
+	c.UserID = 0
 
-	this.SessionId = MakeSessionId()
-	if this.SessionId == "" {
+	c.SessionID = MakeSessionID()
+	if c.SessionID == "" {
 		// エラーコードを入れる
-		this.ResultCode = apputil.ResultCodeError
+		c.ResultCode = apputil.ResultCodeError
 	}
-	outputJson, err := json.Marshal(this)
+	outputJSON, err := json.Marshal(c)
 	if err != nil {
 		// エラーコードを入れる
 		panic(err)
 	}
-	return this.SessionId, outputJson
+	return c.SessionID, outputJSON
 }
 
-func MakeSessionId() string {
+//MakeSessionID ...
+func MakeSessionID() string {
 	b := make([]byte, 32)
 	if _, err := io.ReadFull(rand.Reader, b); err != nil {
 		return ""

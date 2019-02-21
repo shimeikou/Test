@@ -14,39 +14,39 @@ import (
 )
 
 const (
+	//NS NameSpace
 	NS = "/api"
 
-	SERVER_INFO = "/getserverinfo"
-	USER        = "/user"
-	OBJECT      = "/object"
-	SESSION     = "/makesession"
-	SIGNUP      = "/signup"
-	LOGIN       = "/login"
+	//ServerInfo サーバ状態取得API
+	ServerInfo = "/getserverinfo"
+	//Session ...
+	Session = "/makesession"
+
+	//SignUp ...
+	SignUp = "/signup"
+
+	//Login ...
+	Login = "/login"
 )
 
 func init() {
 	ns := beego.NewNamespace(NS,
-		beego.NSNamespace(OBJECT,
-			beego.NSInclude(
-				&controllers.ObjectController{},
-			),
-		),
-		beego.NSNamespace(SESSION,
+		beego.NSNamespace(Session,
 			beego.NSInclude(
 				&controllers.SessionController{},
 			),
 		),
-		beego.NSNamespace(SERVER_INFO,
+		beego.NSNamespace(ServerInfo,
 			beego.NSInclude(
 				&controllers.ServerInfoController{},
 			),
 		),
-		beego.NSNamespace(SIGNUP,
+		beego.NSNamespace(SignUp,
 			beego.NSInclude(
 				&controllers.SignupController{},
 			),
 		),
-		beego.NSNamespace(LOGIN,
+		beego.NSNamespace(Login,
 			beego.NSInclude(
 				&controllers.LoginController{},
 			),
