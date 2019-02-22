@@ -47,8 +47,6 @@ func (c *APICommonPrameter) CheckServerVitality() {
 	defer db.Close()
 	var state int8
 	db.QueryRow("select state from mantenance_infos").Scan(&state)
-
-	logs.Debug(state)
 	if state != apputil.ServerStateOnline {
 		c.StateCode = apputil.ResultCodeMantenance
 	}

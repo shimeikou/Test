@@ -23,7 +23,7 @@ func Init() {
 		logs.EnableFuncCallDepth(true)
 	}
 
-	logs.SetLogger(logs.AdapterFile, `{"filename":"Dev_Test.log","level":7,"maxlines":10000,"maxsize":256,"daily":true,"maxdays":7,"color":true}`)
+	logs.SetLogger(logs.AdapterFile, `{"filename":"Dev_Test.log","level":7,"maxlines":10000,"daily":true,"maxdays":7,"color":true}`)
 	//logs.SetLogFuncCallDepth(1)
 	//logs.SetLogger(logs.AdapterSlack, `{"webhookurl":"https://slack.com/xxx","level":1}`)
 
